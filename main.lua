@@ -101,7 +101,8 @@ for _, mailbox in pairs(found_mail) do
 end
 
 for _, mailbox in pairs(found_mail) do
-  num_new = #mailbox.new_mail
+  num_new = #mailbox.new_mail -- this works because we've been careful with
+                              -- our list indexing.
   if 0 ~= num_new then
     print(num_new .. " new messages in " .. mailbox.name)
   end
