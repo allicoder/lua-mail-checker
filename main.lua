@@ -47,7 +47,12 @@ end
 
 -- list of the folders we've found that contain entries "new", "cur" and "tmp"
 -- (which we interpret as a Maildir mailbox).
-found_mailboxes = {}
+-- This will also contain lists of mail found, in the form
+-- {
+--   {mailbox, {mail1, mail2}},
+--   ...
+-- }
+found_mail = {}
 num_found_mailboxes = 0
 
 -- Go through each listed mailbox
@@ -76,12 +81,28 @@ while nil ~= to_check[i] do
   end
 
   if has_new and has_tmp and has_cur then
-    table.insert(found_mailboxes, to_check[i])
+    table.insert(found_mail, {name = to_check[i], new_mail = {}})
   end
   i = i + 1 -- y u no incremeent :(
---for _, p in pairs(to_check) do
 end
 
-for _, d in pairs(found_mailboxes) do
-  print(d)
+-- TODO perhaps should cache the list of mailboxes?
+
+for _, mailbox in pairs(found_mail) do
+  mailbox_dir = path_join({mailbox.name, "new"})
+  for ent in lfs.dir(mailbox_dir) do
+    -- if not directory also excludes . and .. if present.
+    if "directory" ~= lfs.attributes(path_join({mailbox_dir, ent}), "mode")
+    then
+      -- add all new mails to the table
+      table.insert(mailbox.new_mail, ent)
+    end
+  end
+end
+
+for _, mailbox in pairs(found_mail) do
+  num_new = #mailbox.new_mail
+  if 0 ~= num_new then
+    print(num_new .. " new messages in " .. mailbox.name)
+  end
 end
