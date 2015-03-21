@@ -1,0 +1,7 @@
+Lua Mail Checker
+----------------
+
+Email checker for maildir using lua, suitable for integration into awesome WM
+(which is what I want to use it for). I have a bash script that does something
+like this, but it's not great and I want it in lua so I can get my WM to run it
+natively.
